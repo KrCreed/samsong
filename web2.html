@@ -271,7 +271,7 @@
 </div>
 
 <script>
-  // GitHub에 올린 엑셀 파일의 raw URL (수정된 링크)
+  // GitHub에 올린 엑셀 파일의 raw URL
   const GITHUB_EXCEL_URL = "https://raw.githubusercontent.com/KrCreed/samsong/main/테슬라전국데이터_2%20-%20복사본.xlsx";
 
   let map;
@@ -320,11 +320,10 @@
   function openInfoPanel(){ document.getElementById('infoPanel').classList.add('open'); }
   function closeInfoPanel(){ document.getElementById('infoPanel').classList.remove('open'); }
   
-  // 깃허브 엑셀 파일 자동 로드 (AllOrigins 프록시 사용)
+  // 깃허브 엑셀 파일 자동 로드 (fetch 직접 사용, mode: 'cors')
   async function fetchExcelFromGitHub() {
     try {
-      const proxyUrl = "https://api.allorigins.hexocode.repl.co/get?disableCache=true&raw=true&url=";
-      const response = await fetch(proxyUrl + encodeURIComponent(GITHUB_EXCEL_URL), { mode: 'cors' });
+      const response = await fetch(GITHUB_EXCEL_URL, { mode: 'cors' });
       if(!response.ok) {
         throw new Error("Network response was not ok: " + response.status);
       }
@@ -374,7 +373,7 @@
     }
   }
 
-  // 영상 재생 로직 (crossorigin 속성 추가, raw URL 수정)
+  // 영상 재생 로직 (raw URL 수정)
   function updateInfoPanel(coord){
     document.getElementById('infoDate').textContent = coord.date || "";
     document.getElementById('infoAccident').textContent = coord.accident || "";
@@ -394,11 +393,12 @@
     console.log("요청한 영상 파일명:", videoFileName);
     
     if(videoFileName){
+      // 영상 파일도 raw URL 사용
       const rawUrl = "https://raw.githubusercontent.com/KrCreed/samsong/main/videos/" + videoFileName;
       const videoElem = document.createElement("video");
       videoElem.setAttribute("crossorigin", "anonymous");
       videoElem.controls = true;
-      videoElem.autoplay = true;  // 필요에 따라 제거 가능
+      videoElem.autoplay = true;  // 필요에 따라 제거
       videoElem.style.width = "100%";
       videoElem.style.maxWidth = "250px";
       videoElem.style.height = "150px";
@@ -420,12 +420,7 @@
       zoom: 7,
       mapTypeId: 'roadmap'
     });
-    try {
-      markerCluster = new markerClusterer.MarkerClusterer({ map: map, markers: [] });
-    } catch(e) {
-      console.error("markerCluster 생성 오류: ", e);
-      markerCluster = null;
-    }
+    markerCluster = new markerClusterer.MarkerClusterer({ map: map, markers: [] });
   }
   function setMapType(type){ if(!isMapInitialized) return; map.setMapTypeId(type); }
   
@@ -578,19 +573,14 @@
     openInfoPanel();
   }
   
-  // 마커 갱신 (markerCluster 존재 확인)
+  // 마커 갱신 (markerCluster가 정의되어 있는지 확인)
   function refreshMarkers(){
     if(!isMapInitialized) initMap();
     markers.forEach(m => m.setMap(null));
     markers = [];
-    try {
-      if(markerCluster && typeof markerCluster.clearMarkers === "function") {
-        markerCluster.clearMarkers();
-      } else {
-        markerCluster = new markerClusterer.MarkerClusterer({ map: map, markers: [] });
-      }
-    } catch(e) {
-      console.error("markerCluster 오류:", e);
+    if(markerCluster && typeof markerCluster.clearMarkers === "function") {
+      markerCluster.clearMarkers();
+    } else {
       markerCluster = new markerClusterer.MarkerClusterer({ map: map, markers: [] });
     }
     uploadedCoordinates.forEach(coord => {

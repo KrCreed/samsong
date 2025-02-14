@@ -328,25 +328,25 @@
         throw new Error("Network response was not ok: " + response.status);
       }
       const arrayBuffer = await response.arrayBuffer();
-      const wb = XLSX.read(arrayBuffer, {type:'array'});
+      const wb = XLSX.read(arrayBuffer, { type: 'array' });
       const sheetName = wb.SheetNames[0];
       const ws = wb.Sheets[sheetName];
-      const rows = XLSX.utils.sheet_to_json(ws, {header:1});
+      const rows = XLSX.utils.sheet_to_json(ws, { header: 1 });
       
       uploadedCoordinates = [];
       // 6행부터 파싱 (i = 5)
-      for(let i = 5; i < rows.length; i++){
+      for (let i = 5; i < rows.length; i++) {
         const row = rows[i];
-        if(!row) continue;
+        if (!row) continue;
         let valA = String(row[0] ?? "").trim();
         let valB = String(row[1] ?? "").trim();
-        if(!valA || !valB) continue; // 공란 skip
+        if (!valA || !valB) continue; // 공란 skip
         const lat = parseFloat(row[12] ?? "");
         const lng = parseFloat(row[13] ?? "");
-        if(isNaN(lat) || isNaN(lng)) continue;
+        if (isNaN(lat) || isNaN(lng)) continue;
         
         let rawDate = String(row[3] ?? "").trim();
-        let dateOnly = (rawDate.length >= 10) ? rawDate.substring(0,10) : rawDate;
+        let dateOnly = (rawDate.length >= 10) ? rawDate.substring(0, 10) : rawDate;
         let accident = String(row[18] ?? "").trim();
         let situation = String(row[15] ?? "").trim();
         let road = String(row[36] ?? "").trim();
@@ -367,14 +367,14 @@
       alert(uploadedCoordinates.length + "개 좌표 로드됨 (GitHub Excel)");
       updateGrid();
       refreshMarkers();
-    } catch(err) {
+    } catch (err) {
       console.error("깃허브 엑셀 불러오기 오류:", err);
       alert("깃허브 엑셀 불러오기 오류: " + err.message);
     }
   }
 
   // 영상 재생 로직 (영상 파일 URL도 raw.githubusercontent.com 사용)
-  function updateInfoPanel(coord){
+  function updateInfoPanel(coord) {
     document.getElementById('infoDate').textContent = coord.date || "";
     document.getElementById('infoAccident').textContent = coord.accident || "";
     document.getElementById('infoSituation').textContent = coord.situation || "";
@@ -384,20 +384,20 @@
     videoContainer.innerHTML = "";
     let videoFileName = coord.video;
     
-    if(videoFileName){
+    if (videoFileName) {
       videoFileName = videoFileName.split(/[/\\]/).pop().trim();
-      if(!videoFileName.toLowerCase().endsWith(".mp4")) {
+      if (!videoFileName.toLowerCase().endsWith(".mp4")) {
         videoFileName += ".mp4";
       }
     }
     console.log("요청한 영상 파일명:", videoFileName);
     
-    if(videoFileName){
+    if (videoFileName) {
       const rawUrl = "https://raw.githubusercontent.com/KrCreed/samsong/main/videos/" + videoFileName;
       const videoElem = document.createElement("video");
       videoElem.setAttribute("crossorigin", "anonymous");
       videoElem.controls = true;
-      videoElem.autoplay = true;  // 필요에 따라 제거 가능
+      videoElem.autoplay = true; // 필요에 따라 제거 가능
       videoElem.style.width = "100%";
       videoElem.style.maxWidth = "250px";
       videoElem.style.height = "150px";
@@ -411,42 +411,42 @@
     }
   }
   
-  function initMap(){
-    if(isMapInitialized) return;
+  function initMap() {
+    if (isMapInitialized) return;
     isMapInitialized = true;
     map = new google.maps.Map(document.getElementById('map'), {
-      center: {lat: 35.8, lng: 127.7},
+      center: { lat: 35.8, lng: 127.7 },
       zoom: 7,
       mapTypeId: 'roadmap'
     });
     markerCluster = new markerClusterer.MarkerClusterer({ map: map, markers: [] });
   }
-  function setMapType(type){ if(!isMapInitialized) return; map.setMapTypeId(type); }
+  function setMapType(type) { if (!isMapInitialized) return; map.setMapTypeId(type); }
   
   // 로컬 업로드 함수 (유지)
-  function onExcelChange(e){
+  function onExcelChange(e) {
     const file = e.target.files[0];
-    if(!file) return;
+    if (!file) return;
     const reader = new FileReader();
-    reader.onload = function(evt){
-      try{
+    reader.onload = function (evt) {
+      try {
         const data = new Uint8Array(evt.target.result);
-        const wb = XLSX.read(data, {type:'array'});
+        const wb = XLSX.read(data, { type: 'array' });
         const sheetName = wb.SheetNames[0];
         const ws = wb.Sheets[sheetName];
-        const rows = XLSX.utils.sheet_to_json(ws, {header:1});
+        const rows = XLSX.utils.sheet_to_json(ws, { header: 1 });
         uploadedCoordinates = [];
-        for(let i = 5; i < rows.length; i++){
+        for (let i = 5; i < rows.length; i++) {
           const row = rows[i];
-          if(!row) continue;
+          if (!row) continue;
           let valA = String(row[0] ?? "").trim();
           let valB = String(row[1] ?? "").trim();
-          if(!valA || !valB) continue;
+          if (!valA || !valB) continue;
           const lat = parseFloat(row[12] ?? "");
           const lng = parseFloat(row[13] ?? "");
-          if(isNaN(lat) || isNaN(lng)) continue;
+          if (isNaN(lat) || isNaN(lng)) continue;
           let rawDate = String(row[3] ?? "").trim();
-          let dateOnly = (rawDate.length >= 10) ? rawDate.substring(0,10) : rawDate;
+          let dateOnly = (rawDate.length >= 10) ? rawDate.substring(0, 10) : rawDate;
           let accident = String(row[18] ?? "").trim();
           let situation = String(row[15] ?? "").trim();
           let road = String(row[36] ?? "").trim();
@@ -466,12 +466,12 @@
         alert(uploadedCoordinates.length + "개 좌표 로드됨(엑셀)");
         updateGrid();
         refreshMarkers();
-      } catch(err){
+      } catch (err) {
         console.error("XLSX 파싱 오류:", err);
         alert("엑셀 파싱 오류: " + err.message);
       }
     };
-    reader.onerror = function(err){
+    reader.onerror = function (err) {
       console.error("파일 읽기 오류:", err);
       alert("파일 읽기 실패: " + err);
     };
@@ -479,7 +479,7 @@
   }
   
   // 그리드 업데이트
-  function updateGrid(){
+  function updateGrid() {
     const gridBody = document.getElementById('gridBody');
     gridBody.innerHTML = "";
     const filterValue = document.getElementById('globalFilter').value.trim();
@@ -488,7 +488,7 @@
     dataToShow.forEach(coord => {
       const origIndex = uploadedCoordinates.indexOf(coord);
       const tr = document.createElement("tr");
-      if(coord.selected) { tr.classList.add("selected"); }
+      if (coord.selected) { tr.classList.add("selected"); }
       tr.innerHTML = `
         <td>${coord.date}</td>
         <td>${coord.accident}</td>
@@ -500,8 +500,8 @@
         <td><input type="checkbox" onchange="toggleDisplay(${origIndex}, this)" ${coord.display ? "checked" : ""}></td>
         <td><input type="color" value="${coord.markerColor}" onchange="setMarkerColor(${origIndex}, this)"></td>
       `;
-      tr.addEventListener('click', function(e) {
-        if(e.target.tagName !== "INPUT"){
+      tr.addEventListener('click', function (e) {
+        if (e.target.tagName !== "INPUT") {
           uploadedCoordinates[origIndex].selected = !uploadedCoordinates[origIndex].selected;
           updateGrid();
         }
@@ -511,17 +511,17 @@
   }
   
   // 개별 행의 마커 표시 토글
-  function toggleDisplay(index, checkbox){
+  function toggleDisplay(index, checkbox) {
     uploadedCoordinates[index].display = checkbox.checked;
     refreshMarkers();
   }
-  function setMarkerColor(index, input){
+  function setMarkerColor(index, input) {
     uploadedCoordinates[index].markerColor = input.value;
     refreshMarkers();
   }
   
   // 전체 선택
-  function toggleGlobalSelect(checkbox){
+  function toggleGlobalSelect(checkbox) {
     const filterValue = document.getElementById('globalFilter').value.trim();
     let dataToShow = (filterValue) ? uploadedCoordinates.filter(coord => coord.accident === filterValue) : uploadedCoordinates;
     dataToShow.forEach(coord => { coord.selected = checkbox.checked; });
@@ -529,63 +529,63 @@
   }
   
   // 전역 설정
-  function applyGlobalSettings(){
+  function applyGlobalSettings() {
     const globalColor = document.getElementById('globalColor').value;
     const filterValue = document.getElementById('globalFilter').value.trim();
     let dataToShow = (filterValue) ? uploadedCoordinates.filter(coord => coord.accident === filterValue) : uploadedCoordinates;
     dataToShow.forEach(coord => {
-      if(coord.selected) { coord.markerColor = globalColor; }
+      if (coord.selected) { coord.markerColor = globalColor; }
     });
     updateGrid();
     refreshMarkers();
   }
   
-  function sortGrid(key){
+  function sortGrid(key) {
     uploadedCoordinates.sort((a, b) => {
-      if(a[key] < b[key]) return -1;
-      if(a[key] > b[key]) return 1;
+      if (a[key] < b[key]) return -1;
+      if (a[key] > b[key]) return 1;
       return 0;
     });
     updateGrid();
   }
   
-  function filterGrid(){
+  function filterGrid() {
     updateGrid();
   }
   
   // 날짜 검색
-  function searchByDate(){
+  function searchByDate() {
     const searchTerm = document.getElementById('dateSearch').value.trim();
-    if(!searchTerm){
+    if (!searchTerm) {
       alert("검색할 날짜를 입력하세요.");
       return;
     }
     const results = uploadedCoordinates.filter(coord => coord.date.includes(searchTerm));
-    if(results.length === 0){
+    if (results.length === 0) {
       alert("해당 날짜의 데이터가 없습니다.");
       return;
     }
     const coord = results[0];
-    map.panTo({lat: coord.lat, lng: coord.lng});
+    map.panTo({ lat: coord.lat, lng: coord.lng });
     map.setZoom(12);
     updateInfoPanel(coord);
     openInfoPanel();
   }
   
   // 마커 갱신 (markerCluster가 정의되어 있는지 확인)
-  function refreshMarkers(){
-    if(!isMapInitialized) initMap();
+  function refreshMarkers() {
+    if (!isMapInitialized) initMap();
     markers.forEach(m => m.setMap(null));
     markers = [];
-    if(markerCluster && typeof markerCluster.clearMarkers === "function") {
+    if (markerCluster && typeof markerCluster.clearMarkers === "function") {
       markerCluster.clearMarkers();
     } else {
       markerCluster = new markerClusterer.MarkerClusterer({ map: map, markers: [] });
     }
     uploadedCoordinates.forEach(coord => {
-      if(coord.display === false) return;
+      if (coord.display === false) return;
       const marker = new google.maps.Marker({
-        position: {lat: coord.lat, lng: coord.lng},
+        position: { lat: coord.lat, lng: coord.lng },
         label: {
           text: coord.accident,
           color: coord.markerColor,
@@ -599,14 +599,14 @@
       });
       markers.push(marker);
     });
-    if(markerCluster) {
+    if (markerCluster) {
       markerCluster.addMarkers(markers);
     }
-    map.setCenter({lat: 35.8, lng: 127.7});
+    map.setCenter({ lat: 35.8, lng: 127.7 });
     map.setZoom(7);
   }
   
-  window.onload = function(){
+  window.onload = function () {
     document.getElementById('pageMap').classList.add('active');
     document.querySelectorAll('.submenu-item')[0].classList.add('active');
     initMap();

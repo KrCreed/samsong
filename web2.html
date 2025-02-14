@@ -271,7 +271,7 @@
 </div>
 
 <script>
-  // 깃허브에 올린 엑셀 파일의 raw URL
+  // GitHub에 올린 엑셀 파일의 raw URL (수정된 링크)
   const GITHUB_EXCEL_URL = "https://raw.githubusercontent.com/KrCreed/samsong/main/테슬라전국데이터_2%20-%20복사본.xlsx";
 
   let map;
@@ -374,7 +374,7 @@
     }
   }
 
-  // 영상 재생 로직 (crossorigin 속성 추가)
+  // 영상 재생 로직 (crossorigin 속성 추가, raw URL 수정)
   function updateInfoPanel(coord){
     document.getElementById('infoDate').textContent = coord.date || "";
     document.getElementById('infoAccident').textContent = coord.accident || "";
@@ -394,7 +394,7 @@
     console.log("요청한 영상 파일명:", videoFileName);
     
     if(videoFileName){
-      const rawUrl = "https://github.com/KrCreed/samsong/raw/main/videos/" + videoFileName;
+      const rawUrl = "https://raw.githubusercontent.com/KrCreed/samsong/main/videos/" + videoFileName;
       const videoElem = document.createElement("video");
       videoElem.setAttribute("crossorigin", "anonymous");
       videoElem.controls = true;

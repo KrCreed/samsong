@@ -320,10 +320,11 @@
   function openInfoPanel(){ document.getElementById('infoPanel').classList.add('open'); }
   function closeInfoPanel(){ document.getElementById('infoPanel').classList.remove('open'); }
   
-  // 깃허브 엑셀 파일 자동 로드
+  // 깃허브 엑셀 파일 자동 로드 (프록시 사용)
   async function fetchExcelFromGitHub() {
     try {
-      const response = await fetch(GITHUB_EXCEL_URL, { mode: 'cors' });
+      const proxyUrl = "https://thingproxy.freeboard.io/fetch/";
+      const response = await fetch(proxyUrl + GITHUB_EXCEL_URL, { mode: 'cors' });
       if(!response.ok) {
         throw new Error("Network response was not ok: " + response.status);
       }
@@ -373,7 +374,7 @@
     }
   }
 
-  // 영상 재생 로직
+  // 영상 재생 로직 (crossorigin 속성 추가)
   function updateInfoPanel(coord){
     document.getElementById('infoDate').textContent = coord.date || "";
     document.getElementById('infoAccident').textContent = coord.accident || "";
@@ -395,6 +396,7 @@
     if(videoFileName){
       const rawUrl = "https://github.com/KrCreed/samsong/raw/main/videos/" + videoFileName;
       const videoElem = document.createElement("video");
+      videoElem.setAttribute("crossorigin", "anonymous");
       videoElem.controls = true;
       videoElem.autoplay = true;  // 필요에 따라 제거 가능
       videoElem.style.width = "100%";

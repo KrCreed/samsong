@@ -271,7 +271,7 @@
 </div>
 
 <script>
-  // GitHub에 올린 엑셀 파일의 raw URL
+  // 엑셀 파일 URL 수정 (GitHub raw URL 사용)
   const GITHUB_EXCEL_URL = "https://raw.githubusercontent.com/KrCreed/samsong/main/테슬라전국데이터_2%20-%20복사본.xlsx";
 
   let map;
@@ -320,7 +320,7 @@
   function openInfoPanel(){ document.getElementById('infoPanel').classList.add('open'); }
   function closeInfoPanel(){ document.getElementById('infoPanel').classList.remove('open'); }
   
-  // 깃허브 엑셀 파일 자동 로드 (fetch 직접 사용, mode: 'cors')
+  // 깃허브 엑셀 파일 자동 로드 (cors 모드로 직접 fetch)
   async function fetchExcelFromGitHub() {
     try {
       const response = await fetch(GITHUB_EXCEL_URL, { mode: 'cors' });
@@ -373,7 +373,7 @@
     }
   }
 
-  // 영상 재생 로직 (raw URL 수정)
+  // 영상 재생 로직 (영상 파일 URL도 raw.githubusercontent.com 사용)
   function updateInfoPanel(coord){
     document.getElementById('infoDate').textContent = coord.date || "";
     document.getElementById('infoAccident').textContent = coord.accident || "";
@@ -393,12 +393,11 @@
     console.log("요청한 영상 파일명:", videoFileName);
     
     if(videoFileName){
-      // 영상 파일도 raw URL 사용
       const rawUrl = "https://raw.githubusercontent.com/KrCreed/samsong/main/videos/" + videoFileName;
       const videoElem = document.createElement("video");
       videoElem.setAttribute("crossorigin", "anonymous");
       videoElem.controls = true;
-      videoElem.autoplay = true;  // 필요에 따라 제거
+      videoElem.autoplay = true;  // 필요에 따라 제거 가능
       videoElem.style.width = "100%";
       videoElem.style.maxWidth = "250px";
       videoElem.style.height = "150px";

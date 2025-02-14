@@ -323,7 +323,6 @@
   // 깃허브 엑셀 파일 자동 로드 (AllOrigins 프록시 사용)
   async function fetchExcelFromGitHub() {
     try {
-      // AllOrigins 프록시 (raw 출력)
       const proxyUrl = "https://api.allorigins.hexocode.repl.co/get?disableCache=true&raw=true&url=";
       const response = await fetch(proxyUrl + encodeURIComponent(GITHUB_EXCEL_URL), { mode: 'cors' });
       if(!response.ok) {
@@ -421,8 +420,12 @@
       zoom: 7,
       mapTypeId: 'roadmap'
     });
-    // markerCluster가 없으면 새로 생성
-    markerCluster = new markerClusterer.MarkerClusterer({ map: map, markers: [] });
+    try {
+      markerCluster = new markerClusterer.MarkerClusterer({ map: map, markers: [] });
+    } catch(e) {
+      console.error("markerCluster 생성 오류: ", e);
+      markerCluster = null;
+    }
   }
   function setMapType(type){ if(!isMapInitialized) return; map.setMapTypeId(type); }
   
@@ -575,14 +578,19 @@
     openInfoPanel();
   }
   
-  // 마커 갱신 (markerCluster가 없으면 생성)
+  // 마커 갱신 (markerCluster 존재 확인)
   function refreshMarkers(){
     if(!isMapInitialized) initMap();
     markers.forEach(m => m.setMap(null));
     markers = [];
-    if(markerCluster) {
-      markerCluster.clearMarkers();
-    } else {
+    try {
+      if(markerCluster && typeof markerCluster.clearMarkers === "function") {
+        markerCluster.clearMarkers();
+      } else {
+        markerCluster = new markerClusterer.MarkerClusterer({ map: map, markers: [] });
+      }
+    } catch(e) {
+      console.error("markerCluster 오류:", e);
       markerCluster = new markerClusterer.MarkerClusterer({ map: map, markers: [] });
     }
     uploadedCoordinates.forEach(coord => {
@@ -602,7 +610,9 @@
       });
       markers.push(marker);
     });
-    markerCluster.addMarkers(markers);
+    if(markerCluster) {
+      markerCluster.addMarkers(markers);
+    }
     map.setCenter({lat: 35.8, lng: 127.7});
     map.setZoom(7);
   }
@@ -612,7 +622,7 @@
     document.querySelectorAll('.submenu-item')[0].classList.add('active');
     initMap();
     
-    // 깃허브 엑셀 자동 로드 (HTTPS 환경에서 테스트)
+    // 깃허브 엑셀 자동 로드 (HTTPS 환경에서 실행)
     fetchExcelFromGitHub();
   };
 </script>

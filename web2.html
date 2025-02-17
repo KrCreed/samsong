@@ -34,22 +34,29 @@
     .page-section { display: none; }
     .page-section.active { display: block; }
     
-    /* 지도/위성 토글 */
-    .map-toggle { margin-bottom: 0.5rem; }
-    .map-toggle button {
-      background: #3498db; color: #fff; border: none; padding: 0.4rem 0.7rem;
-      margin-right: 0.5rem; border-radius: 4px; cursor: pointer;
+    /* GRID 페이지 검색 및 컨트롤 영역 */
+    #gridPanel { margin-bottom: 20px; padding: 10px; border: 1px solid #ccc; background: #fafafa; }
+    #gridPanel .search-row, 
+    #gridPanel .control-row { margin-bottom: 5px; }
+    /* 검색 행 1열 배치 및 입력창 간격 동일 */
+    #gridPanel .search-row {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
     }
-    .map-toggle button:hover { background: #2980b9; }
-    
-    /* 날짜 검색 (맵 페이지) */
-    .date-search { margin-bottom: 10px; }
-    .date-search input { padding: 5px; font-size: 14px; }
-    .date-search button {
-      padding: 5px 10px; font-size: 14px; margin-left: 5px;
-      background: #3498db; color: #fff; border: none; border-radius: 4px; cursor: pointer;
+    #gridPanel .search-row .input-group {
+      display: flex;
+      align-items: center;
+      gap: 5px;
     }
-    .date-search button:hover { background: #2980b9; }
+    #gridPanel label { margin-right: 5px; }
+    #gridPanel input[type="text"],
+    #gridPanel input[type="color"] { padding: 5px; font-size: 14px; }
+    #gridPanel button {
+      padding: 5px 10px; background: #3498db; color: #fff; border: none; border-radius: 4px; cursor: pointer;
+    }
+    #gridPanel button:hover { background: #2980b9; }
     
     /* 지도 */
     #map { width: 100%; height: 500px; background: #ddd; }
@@ -71,7 +78,7 @@
     .menu-title { font-size: 0.85rem; text-transform: uppercase; font-weight: 600; margin-bottom: 0.3rem; opacity: 0.7; }
     .submenu-toggle {
       display: flex; align-items: center; justify-content: space-between;
-      padding: 0.5rem 0.5rem; cursor: pointer; margin-top: 0.5rem; border-radius: 4px;
+      padding: 0.5rem; cursor: pointer; margin-top: 0.5rem; border-radius: 4px;
       background: #3b4a58; transition: background 0.2s;
     }
     .submenu-toggle:hover { background: #4a5966; }
@@ -93,7 +100,7 @@
     
     /* 우측 상세 패널 (MAP 페이지에서만 표시) */
     .info-panel {
-      position: fixed; top: 0; right: 0; width: 300px; height: 100%;
+      position: fixed; top: 0; right: 0; width: 50%; height: 100%;
       background: #f8f8f8; border-left: 1px solid #ccc; padding: 1rem; z-index: 999;
       overflow: auto; display: none;
     }
@@ -104,34 +111,15 @@
     .info-row { margin-bottom: 0.6rem; line-height: 1.4; }
     .info-label { font-weight: bold; color: #555; margin-right: 0.2rem; }
     
-    /* 그리드 페이지 */
-    #gridPanel {
-      margin-bottom: 20px; padding: 10px; border: 1px solid #ccc; background: #fafafa;
-    }
-    #gridPanel input[type="text"],
-    #gridPanel input[type="color"] {
-      margin-right: 10px; padding: 5px; font-size: 14px;
-    }
-    #gridPanel button {
-      padding: 5px 10px; background: #3498db; color: #fff; border: none; border-radius: 4px; cursor: pointer;
-    }
-    #gridPanel button:hover { background: #2980b9; }
-    /* 전역 체크박스 및 버튼 간격/레이블 수정 */
-    #gridPanel label[for="globalSelect"],
-    #gridPanel label[for="globalDisplay"],
-    #gridPanel label[for="globalColor"] {
-      margin-left: 20px;
-    }
-    
+    /* 관리 그리드 테이블 */
     #dataGrid { width: 100%; border-collapse: collapse; }
     #dataGrid th, #dataGrid td {
       border: 1px solid #ccc; padding: 5px; text-align: left; font-size: 14px;
     }
     #dataGrid th { background: #eee; cursor: pointer; }
-    /* 선택된 행 스타일 */
     .selected { background-color: #ccc !important; }
     
-    /* 동영상 재생 컨테이너 */
+    /* 동영상 컨테이너 */
     .video-container { margin-top: 0.5rem; margin-bottom: 1rem; }
     
     @media (max-width:768px){
@@ -142,457 +130,550 @@
   </style>
 </head>
 <body>
-
-<div class="wrapper">
-  <!-- 헤더 -->
-  <div class="header">
-    <div class="left-menu">
-      <span class="material-icons menu-icon" onclick="openSidebar()">menu</span>
-      <img src="./logo.png" class="header-logo" />
-      <span class="title">Home</span>
-    </div>
-  </div>
-
-  <!-- 메인 영역 -->
-  <div class="content">
-    <!-- [MAP] 페이지 -->
-    <section id="pageMap" class="page-section active">
-      <h2>비충돌 데이터 MAP</h2>
-      <h3>비충돌 데이터 MAP</h3>
-      <div class="map-toggle">
-        <button onclick="setMapType('roadmap')">지도</button>
-        <button onclick="setMapType('satellite')">위성</button>
-      </div>
-      <div class="date-search">
-        <input type="text" id="dateSearch" placeholder="날짜 검색 (YYYY-MM-DD)" />
-        <button onclick="searchByDate()">검색</button>
-      </div>
-      <div id="map"></div>
-    </section>
-    
-    <!-- [GRID] 페이지 -->
-    <section id="pageGrid" class="page-section">
-      <h2>비충돌 데이터 관리 Grid</h2>
-      <!-- 그리드 상단 패널 -->
-      <div id="gridPanel">
-        <label for="globalFilter">사고유형 검색:</label>
-        <input type="text" id="globalFilter" placeholder="예: 631" />
-        <button onclick="filterGrid()">검색</button>
-        <label for="globalSelect">전체선택</label>
-        <input type="checkbox" id="globalSelect" onchange="toggleGlobalSelect(this)" />
-        <label for="globalDisplay">마커 표시</label>
-        <input type="checkbox" id="globalDisplay" onchange="applyGlobalDisplay(this)" />
-        <label for="globalColor">마커 색상</label>
-        <input type="color" id="globalColor" value="#ff0000" />
-        <button onclick="applyGlobalSettings()">색상적용</button>
-      </div>
-      <table id="dataGrid">
-        <thead>
-          <tr>
-            <th onclick="sortGrid('date')">날짜</th>
-            <th onclick="sortGrid('accident')">사고유형</th>
-            <th onclick="sortGrid('situation')">상황</th>
-            <th onclick="sortGrid('road')">도로명</th>
-            <th onclick="sortGrid('video')">영상파일명</th>
-            <th onclick="sortGrid('lat')">위도</th>
-            <th onclick="sortGrid('lng')">경도</th>
-            <th>마커 표시</th>
-            <th>마커 색상</th>
-          </tr>
-        </thead>
-        <tbody id="gridBody">
-          <!-- GitHub에서 로드된 데이터가 채워집니다 -->
-        </tbody>
-      </table>
-    </section>
-  </div>
-</div>
-
-<!-- 좌측 사이드바 (업/엑셀 하위메뉴 제거) -->
-<div class="sidebar" id="sidebar">
-  <div class="sidebar-header">
-    <div class="logo">Samsong</div>
-    <button class="close-btn" onclick="closeSidebar()">✖</button>
-  </div>
-  <div class="menu-group">
-    <div class="menu-title">Dash Board</div>
-    <div class="submenu-toggle" onclick="toggleSubmenu()">
-      <span><i class="material-icons">directions_car</i>비충돌 데이터 관리</span>
-      <span class="material-icons">expand_more</span>
-    </div>
-    <div class="submenu" id="bcSubmenu">
-      <div class="submenu-item" onclick="onSubmenuClick('map')">
-        <div class="circle"></div>비충돌 데이터 MAP
-      </div>
-      <div class="submenu-item" onclick="onSubmenuClick('grid')">
-        <div class="circle"></div>비충돌 데이터 관리 Grid
+  <div class="wrapper">
+    <!-- 헤더 -->
+    <div class="header">
+      <div class="left-menu">
+        <span class="material-icons menu-icon" onclick="openSidebar()">menu</span>
+        <img src="./logo.png" class="header-logo" />
+        <span class="title">Home</span>
       </div>
     </div>
+    <!-- 메인 영역 -->
+    <div class="content">
+      <!-- [MAP] 페이지 -->
+      <section id="pageMap" class="page-section active">
+        <h2>비충돌 데이터 MAP</h2>
+        <div id="map"></div>
+      </section>
+      <!-- [GRID] 페이지 -->
+      <section id="pageGrid" class="page-section">
+        <h2>비충돌 데이터 관리 Grid</h2>
+        <!-- 그리드 상단 패널: 검색 필드 (1열 배치) -->
+        <div id="gridPanel">
+          <div class="search-row">
+            <div class="input-group">
+              <label for="gridDateSearch">날짜 검색:</label>
+              <input type="text" id="gridDateSearch" placeholder="예: 20230110" onkeydown="if(event.key==='Enter'){ updateGrid(); }" />
+            </div>
+            <div class="input-group">
+              <label for="gridRoadSearch">도로명 검색:</label>
+              <input type="text" id="gridRoadSearch" placeholder="예: 서초구" onkeydown="if(event.key==='Enter'){ updateGrid(); }" />
+            </div>
+            <div class="input-group">
+              <label for="globalFilter">사고유형 검색:</label>
+              <input type="text" id="globalFilter" placeholder="예: 631" onkeydown="if(event.key==='Enter'){ updateGrid(); }" />
+            </div>
+            <button onclick="updateGrid()">검색</button>
+            <div class="input-group">
+              <label for="globalHighlightFilter">강조만 보기</label>
+              <input type="checkbox" id="globalHighlightFilter" onchange="updateGrid()" />
+            </div>
+          </div>
+          <!-- 그리드 상단 패널: 컨트롤 (2행) -->
+          <div class="control-row">
+            <label for="globalSelect">전체선택</label>
+            <input type="checkbox" id="globalSelect" onchange="toggleGlobalSelect(this)" style="margin-right:20px;" />
+            <label for="globalDisplay">마커 표시</label>
+            <input type="checkbox" id="globalDisplay" onchange="applyGlobalDisplay(this)" style="margin-right:20px;" />
+            <label for="globalHighlight">마커 강조</label>
+            <input type="checkbox" id="globalHighlight" onchange="toggleGlobalHighlight(this)" style="margin-right:20px;" />
+            <label for="globalColor">마커 색상</label>
+            <input type="color" id="globalColor" value="#ff0000" style="margin-right:20px;" />
+            <button onclick="applyGlobalSettings()">색상적용</button>
+          </div>
+        </div>
+        <table id="dataGrid">
+          <thead>
+            <tr>
+              <th onclick="sortGrid('date')">날짜</th>
+              <th onclick="sortGrid('accident')">사고유형</th>
+              <th onclick="sortGrid('situation')">상황</th>
+              <th onclick="sortGrid('road')">도로명</th>
+              <th onclick="sortGrid('video')">영상파일명</th>
+              <th onclick="sortGrid('lat')">위도</th>
+              <th onclick="sortGrid('lng')">경도</th>
+              <th>마커 표시</th>
+              <th>마커 색상</th>
+              <th>마커 강조</th>
+            </tr>
+          </thead>
+          <tbody id="gridBody">
+            <!-- GitHub에서 로드된 데이터가 채워집니다 -->
+          </tbody>
+        </table>
+      </section>
+    </div>
   </div>
-</div>
-
-<!-- 우측 상세 패널 (MAP 페이지에서만 표시) -->
-<div class="info-panel" id="infoPanel">
-  <div class="info-header">
-    <h3>상세 정보</h3>
-    <button class="info-close-btn" onclick="closeInfoPanel()">X</button>
-  </div>
-  <div class="info-row"><span class="info-label">날짜:</span> <span id="infoDate"></span></div>
-  <div class="info-row"><span class="info-label">사고유형:</span> <span id="infoAccident"></span></div>
-  <div class="info-row"><span class="info-label">상황:</span> <span id="infoSituation"></span></div>
-  <div class="info-row"><span class="info-label">도로명:</span> <span id="infoRoad"></span></div>
-  <div class="video-container" id="infoVideoContainer">
-    <!-- video 요소가 생성되어 재생됩니다 -->
-  </div>
-</div>
-
-<script>
-  // GitHub의 Excel 파일 raw URL
-  const GITHUB_EXCEL_URL = "https://raw.githubusercontent.com/KrCreed/samsong/main/테슬라전국데이터_2%20-%20복사본.xlsx";
-
-  let map;
-  let markerCluster;
-  let isMapInitialized = false;
-  let uploadedCoordinates = [];
-  let markers = [];
-  let currentGridData = []; // 현재 보이는 데이터
-
-  // Excel-like 그리드 선택 관련 전역 변수
-  let isDragging = false;
-  let selectionAdd = true; // 드래그 시 선택할지 해제할지 결정
-  let lastClickedGridIndex = null; // Shift 선택을 위한 마지막 클릭된 그리드 인덱스
-
-  // 문서 클릭 시 그리드 외부 클릭이면 선택 해제 (엑셀처럼 동작)
-  document.addEventListener('click', function(e) {
-    const gridPanel = document.getElementById('dataGrid');
-    const globalPanel = document.getElementById('gridPanel');
-    if(!gridPanel.contains(e.target) && !globalPanel.contains(e.target)){
-      uploadedCoordinates.forEach(coord => coord.selected = false);
-      updateGrid();
-    }
-  });
-  // 마우스업: 드래그 선택 종료
-  document.addEventListener('mouseup', () => { isDragging = false; });
-
-  function openSidebar(){ document.getElementById('sidebar').classList.add('open'); }
-  function closeSidebar(){ document.getElementById('sidebar').classList.remove('open'); }
-  function toggleSubmenu(){ document.getElementById('bcSubmenu').classList.toggle('open'); }
-  function onSubmenuClick(page){
-    closeSidebar();
-    // MAP 페이지가 아니면 상세정보 패널 숨김
-    if(page !== 'map'){
-      closeInfoPanel();
-    }
-    document.querySelectorAll('.submenu-item').forEach(i => i.classList.remove('active'));
-    const items = document.querySelectorAll('.submenu-item');
-    if(page === 'map'){
-      items[0].classList.add('active');
-    } else if(page === 'grid'){
-      items[1].classList.add('active');
-    }
-    document.querySelectorAll('.page-section').forEach(sec => sec.classList.remove('active'));
-    if(page === 'map'){
-      document.getElementById('pageMap').classList.add('active');
-      refreshMarkers();
-    } else if(page === 'grid'){
-      document.getElementById('pageGrid').classList.add('active');
-      updateGrid();
-    }
-  }
-  function openInfoPanel(){ document.getElementById('infoPanel').classList.add('open'); }
-  function closeInfoPanel(){ document.getElementById('infoPanel').classList.remove('open'); }
   
-  // GitHub Excel 파일 자동 로드
-  async function fetchExcelFromGitHub() {
-    try {
-      const response = await fetch(GITHUB_EXCEL_URL);
-      if(!response.ok) {
-        throw new Error("Network response was not ok: " + response.status);
+  <!-- 좌측 사이드바 -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">Samsong</div>
+      <button class="close-btn" onclick="closeSidebar()">✖</button>
+    </div>
+    <div class="menu-group">
+      <div class="menu-title">Dash Board</div>
+      <div class="submenu-toggle" onclick="toggleSubmenu()">
+        <span><i class="material-icons">directions_car</i>비충돌 데이터 관리</span>
+        <span class="material-icons">expand_more</span>
+      </div>
+      <div class="submenu" id="bcSubmenu">
+        <div class="submenu-item" onclick="onSubmenuClick('map')">
+          <div class="circle"></div>비충돌 데이터 MAP
+        </div>
+        <div class="submenu-item" onclick="onSubmenuClick('grid')">
+          <div class="circle"></div>비충돌 데이터 관리 Grid
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 우측 상세 패널 (MAP 페이지에서만 표시) -->
+  <div class="info-panel" id="infoPanel">
+    <div class="info-header">
+      <h3>상세 정보</h3>
+      <button class="info-close-btn" onclick="closeInfoPanel()">X</button>
+    </div>
+    <div class="info-row"><span class="info-label">날짜:</span> <span id="infoDate"></span></div>
+    <div class="info-row"><span class="info-label">사고유형:</span> <span id="infoAccident"></span></div>
+    <div class="info-row"><span class="info-label">상황:</span> <span id="infoSituation"></span></div>
+    <div class="info-row"><span class="info-label">도로명:</span> <span id="infoRoad"></span></div>
+    <div class="video-container" id="infoVideoContainer">
+      <!-- video 요소가 생성되어 재생됩니다 -->
+    </div>
+  </div>
+  
+  <script>
+    /* 전역 상수 */
+    const DEFAULT_CENTER = { lat: 35.8, lng: 127.7 };
+    const DEFAULT_ZOOM = 7;
+    
+    /* 토글 상태: 강조 마커만 보기 (ON이면 오직 강조된 좌표만 클러스터에 포함) */
+    let showHighlightedMarkers = false; // OFF가 기본: 모두 클러스터에 포함, 강조된 건 강조 아이콘
+    
+    /* GitHub Excel URL */
+    const GITHUB_EXCEL_URL = "https://raw.githubusercontent.com/KrCreed/samsong/main/테슬라전국데이터_2%20-%20복사본.xlsx";
+    
+    let map;
+    let markerCluster;
+    let isMapInitialized = false;
+    
+    let uploadedCoordinates = [];
+    let clusterMarkers = [];   // 모든 마커 (일반 아이콘 또는 강조 아이콘)
+    let markerMap = new Map(); // coord -> marker 객체 재활용
+    
+    let currentGridData = [];
+    let isDragging = false;
+    let selectionAdd = true;
+    let lastClickedGridIndex = null;
+    
+    function openSidebar(){ document.getElementById('sidebar').classList.add('open'); }
+    function closeSidebar(){ document.getElementById('sidebar').classList.remove('open'); }
+    function toggleSubmenu(){ document.getElementById('bcSubmenu').classList.toggle('open'); }
+    
+    function onSubmenuClick(page){
+      closeSidebar();
+      if(page !== 'map') closeInfoPanel();
+      document.querySelectorAll('.submenu-item').forEach(i => i.classList.remove('active'));
+      const items = document.querySelectorAll('.submenu-item');
+      if(page === 'map') items[0].classList.add('active');
+      else if(page === 'grid') items[1].classList.add('active');
+      document.querySelectorAll('.page-section').forEach(sec => sec.classList.remove('active'));
+      if(page === 'map'){
+        document.getElementById('pageMap').classList.add('active');
+        refreshMarkers();
+      } else {
+        document.getElementById('pageGrid').classList.add('active');
+        updateGrid();
       }
-      const arrayBuffer = await response.arrayBuffer();
-      const wb = XLSX.read(arrayBuffer, {type:'array'});
-      const sheetName = wb.SheetNames[0];
-      const ws = wb.Sheets[sheetName];
-      const rows = XLSX.utils.sheet_to_json(ws, {header:1});
+    }
+    function openInfoPanel(){ document.getElementById('infoPanel').classList.add('open'); }
+    function closeInfoPanel(){ document.getElementById('infoPanel').classList.remove('open'); }
+    
+    /* GitHub Excel 로드 */
+    async function fetchExcelFromGitHub(){
+      try {
+        const response = await fetch(GITHUB_EXCEL_URL);
+        if(!response.ok) throw new Error("Network response was not ok: " + response.status);
+        const arrayBuffer = await response.arrayBuffer();
+        const wb = XLSX.read(arrayBuffer, {type:'array'});
+        const sheetName = wb.SheetNames[0];
+        const ws = wb.Sheets[sheetName];
+        const rows = XLSX.utils.sheet_to_json(ws, {header:1});
+        uploadedCoordinates = [];
+        for(let i=5; i<rows.length; i++){
+          const row = rows[i];
+          if(!row) continue;
+          let valA = String(row[0]??"").trim();
+          let valB = String(row[1]??"").trim();
+          if(!valA || !valB) continue;
+          const lat = parseFloat(row[12]??"");
+          const lng = parseFloat(row[13]??"");
+          if(isNaN(lat) || isNaN(lng)) continue;
+          let rawDate = String(row[3]??"").trim();
+          let dateOnly = (rawDate.length>=10)?rawDate.substring(0,10):rawDate;
+          let accident = String(row[18]??"").trim();
+          let situation = String(row[15]??"").trim();
+          let road = String(row[36]??"").trim();
+          let videoFile = String(row[2]??"").trim();
+          uploadedCoordinates.push({
+            lat, lng,
+            date: dateOnly,
+            accident,
+            situation,
+            road,
+            video: videoFile,
+            display: true,
+            markerColor: "#ff0000",
+            selected: false,
+            highlight: false
+          });
+        }
+        alert(uploadedCoordinates.length + "개 좌표 로드됨 (GitHub Excel)");
+        updateGrid();
+        refreshMarkers();
+      } catch(err){
+        console.error("GitHub Excel 불러오기 오류:", err);
+        alert("GitHub Excel 불러오기 오류: " + err.message);
+      }
+    }
+    
+    /* 상세정보 패널 업데이트 */
+    function updateInfoPanel(coord){
+      document.getElementById('infoDate').textContent = coord.date || "";
+      document.getElementById('infoAccident').textContent = coord.accident || "";
+      document.getElementById('infoSituation').textContent = coord.situation || "";
+      document.getElementById('infoRoad').textContent = coord.road || "";
+      const videoContainer = document.getElementById('infoVideoContainer');
+      videoContainer.innerHTML = "";
+      let videoFileName = coord.video;
+      if(videoFileName){
+        videoFileName = videoFileName.split(/[/\\]/).pop().trim();
+        if(!videoFileName.toLowerCase().endsWith(".mp4")) { videoFileName += ".mp4"; }
+      }
+      if(videoFileName){
+        const rawUrl = "https://github.com/KrCreed/samsong/raw/main/videos/" + videoFileName;
+        const videoElem = document.createElement("video");
+        videoElem.controls = true;
+        videoElem.autoplay = true;
+        videoElem.style.width = "100%";
+        videoElem.style.height = "300px";
+        const source = document.createElement("source");
+        source.src = rawUrl;
+        source.type = "video/mp4";
+        videoElem.appendChild(source);
+        videoContainer.appendChild(videoElem);
+      } else {
+        videoContainer.textContent = "동영상 파일이 없습니다.";
+      }
+    }
+    
+    /* 지도 초기화 */
+    function initMap(){
+      if(isMapInitialized) return;
+      isMapInitialized = true;
+      map = new google.maps.Map(document.getElementById('map'), {
+        center: DEFAULT_CENTER,
+        zoom: DEFAULT_ZOOM,
+        mapTypeId: 'roadmap'
+      });
+      markerCluster = new markerClusterer.MarkerClusterer({ map, markers: [] });
       
-      uploadedCoordinates = [];
-      // 6행부터 파싱 (i = 5)
-      for(let i = 5; i < rows.length; i++){
-        const row = rows[i];
-        if(!row) continue;
-        let valA = String(row[0] ?? "").trim();
-        let valB = String(row[1] ?? "").trim();
-        if(!valA || !valB) continue; // 공란 skip
-        const lat = parseFloat(row[12] ?? "");
-        const lng = parseFloat(row[13] ?? "");
-        if(isNaN(lat) || isNaN(lng)) continue;
-        
-        let rawDate = String(row[3] ?? "").trim();
-        let dateOnly = (rawDate.length >= 10) ? rawDate.substring(0,10) : rawDate;
-        let accident = String(row[18] ?? "").trim();
-        let situation = String(row[15] ?? "").trim();
-        let road = String(row[36] ?? "").trim();
-        let videoFile = String(row[2] ?? "").trim();
-        
-        uploadedCoordinates.push({
-          lat, lng,
-          date: dateOnly,
-          accident,
-          situation,
-          road,
-          video: videoFile,
-          display: true,
-          markerColor: "#ff0000",
-          selected: false
-        });
+      // 강조 마커 보기 토글 버튼 (오른쪽 상단)
+      const toggleDiv = document.createElement('div');
+      createToggleControl(toggleDiv);
+      map.controls[google.maps.ControlPosition.TOP_RIGHT].push(toggleDiv);
+      
+      // 지도 초기화 버튼 (왼쪽 상단)
+      const resetDiv = document.createElement('div');
+      createResetControl(resetDiv);
+      map.controls[google.maps.ControlPosition.LEFT_TOP].push(resetDiv);
+    }
+    
+    /* 지도 초기화 버튼 생성 */
+    function createResetControl(controlDiv){
+      controlDiv.style.backgroundColor = '#fff';
+      controlDiv.style.border = '2px solid #fff';
+      controlDiv.style.borderRadius = '3px';
+      controlDiv.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
+      controlDiv.style.cursor = 'pointer';
+      controlDiv.style.marginTop = '10px';
+      controlDiv.style.marginLeft = '10px';
+      controlDiv.style.textAlign = 'center';
+      controlDiv.title = '클릭하여 지도 초기화';
+      
+      const controlText = document.createElement('div');
+      controlText.style.fontFamily = 'Roboto,Arial,sans-serif';
+      controlText.style.fontSize = '16px';
+      controlText.style.padding = '8px';
+      controlText.innerHTML = '초기화';
+      controlDiv.appendChild(controlText);
+      
+      controlDiv.addEventListener('click', () => {
+        map.setCenter(DEFAULT_CENTER);
+        map.setZoom(DEFAULT_ZOOM);
+      });
+    }
+    
+    /* 강조 마커 보기 토글 버튼 생성 */
+    function createToggleControl(controlDiv){
+      controlDiv.style.backgroundColor = '#fff';
+      controlDiv.style.border = '2px solid #fff';
+      controlDiv.style.borderRadius = '3px';
+      controlDiv.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
+      controlDiv.style.cursor = 'pointer';
+      controlDiv.style.marginTop = '10px';
+      controlDiv.style.marginRight = '10px';
+      controlDiv.style.textAlign = 'center';
+      controlDiv.title = '클릭하여 강조 마커만 보기 토글';
+      
+      const controlText = document.createElement('div');
+      controlText.style.fontFamily = 'Roboto,Arial,sans-serif';
+      controlText.style.fontSize = '16px';
+      controlText.style.padding = '8px';
+      controlText.innerHTML = '강조 마커만 보기: OFF';
+      controlDiv.appendChild(controlText);
+      
+      controlDiv.addEventListener('click', () => {
+        showHighlightedMarkers = !showHighlightedMarkers;
+        controlText.innerHTML = '강조 마커만 보기: ' + (showHighlightedMarkers ? 'ON' : 'OFF');
+        refreshMarkers();
+      });
+    }
+    
+    /* 일반 마커 아이콘 생성 */
+    function createMarkerIcon(color, text){
+      const svg = `
+        <svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="20" cy="20" r="18" fill="${color}" stroke="white" stroke-width="2"/>
+          <text x="20" y="26" text-anchor="middle" fill="#FFFFFF" font-size="16" font-family="Roboto" font-weight="bold">${text}</text>
+        </svg>
+      `;
+      return {
+        url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg),
+        scaledSize: new google.maps.Size(40, 40)
+      };
+    }
+    
+    /* 강조 마커 아이콘 생성 */
+    function createHighlightedIcon(color, text){
+      const svg = `
+        <svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="20" cy="20" r="18" fill="${color}" stroke="gold" stroke-width="4"/>
+          <text x="20" y="26" text-anchor="middle" fill="#FFFFFF" font-size="16" font-family="Roboto" font-weight="bold">${text}</text>
+        </svg>
+      `;
+      return {
+        url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg),
+        scaledSize: new google.maps.Size(40, 40)
+      };
+    }
+    
+    /* 그리드 업데이트 */
+    function updateGrid(){
+      const gridBody = document.getElementById('gridBody');
+      gridBody.innerHTML = "";
+      
+      const filterValue = document.getElementById('globalFilter').value.trim();
+      const gridDate = document.getElementById('gridDateSearch').value.trim();
+      const gridRoad = document.getElementById('gridRoadSearch').value.trim();
+      const highlightOnly = document.getElementById('globalHighlightFilter').checked;
+      
+      let dataToShow = uploadedCoordinates;
+      if(filterValue) {
+        dataToShow = dataToShow.filter(coord => coord.accident.includes(filterValue));
       }
-      alert(uploadedCoordinates.length + "개 좌표 로드됨 (GitHub Excel)");
+      if(gridDate) {
+        const searchDate = gridDate.replace(/-/g, '');
+        dataToShow = dataToShow.filter(coord => coord.date.replace(/-/g, '').includes(searchDate));
+      }
+      if(gridRoad) {
+        dataToShow = dataToShow.filter(coord => coord.road.includes(gridRoad));
+      }
+      if(highlightOnly) {
+        dataToShow = dataToShow.filter(coord => coord.highlight);
+      }
+      
+      currentGridData = dataToShow;
+      
+      dataToShow.forEach((coord, gridIndex) => {
+        const origIndex = uploadedCoordinates.indexOf(coord);
+        const tr = document.createElement("tr");
+        tr.dataset.origIndex = origIndex;
+        tr.dataset.gridIndex = gridIndex;
+        if(coord.selected) tr.classList.add("selected");
+        tr.innerHTML = `
+          <td>${coord.date}</td>
+          <td>${coord.accident}</td>
+          <td>${coord.situation}</td>
+          <td>${coord.road}</td>
+          <td>${coord.video}</td>
+          <td>${coord.lat}</td>
+          <td>${coord.lng}</td>
+          <td><input type="checkbox" onchange="toggleDisplay(${origIndex}, this)" ${coord.display ? "checked" : ""}></td>
+          <td><input type="color" value="${coord.markerColor}" onchange="setMarkerColor(${origIndex}, this)"></td>
+          <td><input type="checkbox" onchange="toggleHighlight(${origIndex}, this)" ${coord.highlight ? "checked" : ""}></td>
+        `;
+        tr.addEventListener('mousedown', function(e) {
+          e.preventDefault();
+          isDragging = true;
+          if(e.ctrlKey || e.metaKey) {
+            selectionAdd = !uploadedCoordinates[origIndex].selected;
+            uploadedCoordinates[origIndex].selected = selectionAdd;
+          } else if(e.shiftKey && lastClickedGridIndex !== null) {
+            return;
+          } else {
+            uploadedCoordinates.forEach(c => c.selected = false);
+            document.querySelectorAll('#gridBody tr').forEach(row => row.classList.remove('selected'));
+            uploadedCoordinates[origIndex].selected = true;
+            selectionAdd = true;
+          }
+          tr.classList.toggle('selected', uploadedCoordinates[origIndex].selected);
+          lastClickedGridIndex = gridIndex;
+        });
+        tr.addEventListener('mouseenter', function(e) {
+          if(isDragging) {
+            uploadedCoordinates[origIndex].selected = selectionAdd;
+            tr.classList.toggle('selected', selectionAdd);
+          }
+        });
+        tr.addEventListener('mouseup', function(e) { isDragging = false; });
+        tr.addEventListener('click', function(e) {
+          if(e.shiftKey && lastClickedGridIndex !== null) {
+            let currentGridRows = Array.from(document.querySelectorAll('#gridBody tr'));
+            let currentIndex = gridIndex;
+            let start = Math.min(lastClickedGridIndex, currentIndex);
+            let end = Math.max(lastClickedGridIndex, currentIndex);
+            currentGridRows.forEach((row, idx) => {
+              if(idx >= start && idx <= end) {
+                let origIdx = parseInt(row.dataset.origIndex);
+                uploadedCoordinates[origIdx].selected = true;
+                row.classList.add('selected');
+              }
+            });
+          }
+        });
+        gridBody.appendChild(tr);
+      });
+    }
+    
+    /* 개별 행의 마커 표시/색상/강조 */
+    function toggleDisplay(index, checkbox) {
+      uploadedCoordinates[index].display = checkbox.checked;
+      refreshMarkers();
+    }
+    function setMarkerColor(index, input) {
+      uploadedCoordinates[index].markerColor = input.value;
+      refreshMarkers();
+    }
+    function toggleHighlight(index, checkbox) {
+      uploadedCoordinates[index].highlight = checkbox.checked;
+      refreshMarkers();
+    }
+    
+    /* 전역 컨트롤 */
+    function toggleGlobalHighlight(checkbox) {
+      uploadedCoordinates.forEach(coord => {
+        if(coord.selected) coord.highlight = checkbox.checked;
+      });
       updateGrid();
       refreshMarkers();
-    } catch(err) {
-      console.error("GitHub Excel 불러오기 오류:", err);
-      alert("GitHub Excel 불러오기 오류: " + err.message);
     }
-  }
-  
-  // 영상 재생 로직 (상세정보 패널)
-  function updateInfoPanel(coord){
-    document.getElementById('infoDate').textContent = coord.date || "";
-    document.getElementById('infoAccident').textContent = coord.accident || "";
-    document.getElementById('infoSituation').textContent = coord.situation || "";
-    document.getElementById('infoRoad').textContent = coord.road || "";
-    
-    const videoContainer = document.getElementById('infoVideoContainer');
-    videoContainer.innerHTML = "";
-    let videoFileName = coord.video;
-    
-    if(videoFileName){
-      videoFileName = videoFileName.split(/[/\\]/).pop().trim();
-      if(!videoFileName.toLowerCase().endsWith(".mp4")) {
-        videoFileName += ".mp4";
-      }
+    function toggleGlobalSelect(checkbox) {
+      const filterValue = document.getElementById('globalFilter').value.trim();
+      let dataToShow = filterValue
+        ? uploadedCoordinates.filter(coord => coord.accident.includes(filterValue))
+        : uploadedCoordinates;
+      dataToShow.forEach(coord => { coord.selected = checkbox.checked; });
+      updateGrid();
     }
-    console.log("요청한 영상 파일명:", videoFileName);
-    
-    if(videoFileName){
-      const rawUrl = "https://github.com/KrCreed/samsong/raw/main/videos/" + videoFileName;
-      const videoElem = document.createElement("video");
-      videoElem.controls = true;
-      videoElem.autoplay = true;
-      videoElem.style.width = "100%";
-      videoElem.style.maxWidth = "250px";
-      videoElem.style.height = "150px";
-      const source = document.createElement("source");
-      source.src = rawUrl;
-      source.type = "video/mp4";
-      videoElem.appendChild(source);
-      videoContainer.appendChild(videoElem);
-    } else {
-      videoContainer.textContent = "동영상 파일이 없습니다.";
+    function applyGlobalSettings() {
+      const globalColor = document.getElementById('globalColor').value;
+      const filterValue = document.getElementById('globalFilter').value.trim();
+      let dataToShow = filterValue
+        ? uploadedCoordinates.filter(coord => coord.accident.includes(filterValue))
+        : uploadedCoordinates;
+      dataToShow.forEach(coord => {
+        if(coord.selected) coord.markerColor = globalColor;
+      });
+      updateGrid();
+      refreshMarkers();
     }
-  }
-  
-  function initMap(){
-    if(isMapInitialized) return;
-    isMapInitialized = true;
-    map = new google.maps.Map(document.getElementById('map'), {
-      center: {lat: 35.8, lng: 127.7},
-      zoom: 7,
-      mapTypeId: 'roadmap'
-    });
-    markerCluster = new markerClusterer.MarkerClusterer({ map, markers: [] });
-  }
-  function setMapType(type){ if(!isMapInitialized) return; map.setMapTypeId(type); }
-  
-  // 그리드 업데이트 (Excel처럼 드래그/컨트롤/쉬프트 선택 및 클릭 시 토글)
-  function updateGrid(){
-    const gridBody = document.getElementById('gridBody');
-    gridBody.innerHTML = "";
-    const filterValue = document.getElementById('globalFilter').value.trim();
-    let dataToShow = (filterValue) ? uploadedCoordinates.filter(coord => coord.accident === filterValue) : uploadedCoordinates;
-    currentGridData = dataToShow;
-    dataToShow.forEach((coord, gridIndex) => {
-      const origIndex = uploadedCoordinates.indexOf(coord);
-      const tr = document.createElement("tr");
-      // data attribute로 원본 인덱스와 그리드 인덱스 저장
-      tr.dataset.origIndex = origIndex;
-      tr.dataset.gridIndex = gridIndex;
-      if(coord.selected) { tr.classList.add("selected"); }
-      tr.innerHTML = `
-        <td>${coord.date}</td>
-        <td>${coord.accident}</td>
-        <td>${coord.situation}</td>
-        <td>${coord.road}</td>
-        <td>${coord.video}</td>
-        <td>${coord.lat}</td>
-        <td>${coord.lng}</td>
-        <td><input type="checkbox" onchange="toggleDisplay(${origIndex}, this)" ${coord.display ? "checked" : ""}></td>
-        <td><input type="color" value="${coord.markerColor}" onchange="setMarkerColor(${origIndex}, this)"></td>
-      `;
-      // mousedown: 드래그/일반 클릭 시 선택 처리 (Ctrl/Shift 여부에 따라)
-      tr.addEventListener('mousedown', function(e) {
-        e.preventDefault();
-        isDragging = true;
-        if(e.ctrlKey || e.metaKey) {
-          // Ctrl/Meta: 현재 행의 선택 상태만 토글
-          selectionAdd = !uploadedCoordinates[origIndex].selected;
-          uploadedCoordinates[origIndex].selected = selectionAdd;
-        } else if(e.shiftKey && lastClickedGridIndex !== null) {
-          // Shift: click 이벤트에서 범위 선택 처리
-          return;
-        } else {
-          // 일반 클릭: 이전 선택 모두 해제 후 현재 행만 선택
-          uploadedCoordinates.forEach(c => c.selected = false);
-          document.querySelectorAll('#gridBody tr').forEach(row => row.classList.remove('selected'));
-          uploadedCoordinates[origIndex].selected = true;
-          selectionAdd = true;
-        }
-        tr.classList.toggle('selected', uploadedCoordinates[origIndex].selected);
-        lastClickedGridIndex = gridIndex;
+    function applyGlobalDisplay(checkbox) {
+      uploadedCoordinates.forEach(coord => {
+        if(coord.selected) coord.display = checkbox.checked;
       });
-      // mouseenter: 드래그 중이면 현재 행 선택/해제
-      tr.addEventListener('mouseenter', function(e) {
-        if(isDragging) {
-          uploadedCoordinates[origIndex].selected = selectionAdd;
-          tr.classList.toggle('selected', selectionAdd);
-        }
+      updateGrid();
+      refreshMarkers();
+    }
+    
+    /* 정렬 */
+    function sortGrid(key) {
+      uploadedCoordinates.sort((a, b) => {
+        if(a[key] < b[key]) return -1;
+        if(a[key] > b[key]) return 1;
+        return 0;
       });
-      // mouseup: 드래그 종료
-      tr.addEventListener('mouseup', function(e) {
-        isDragging = false;
-      });
-      // click: Shift 키 눌렀을 때 범위 선택 처리
-      tr.addEventListener('click', function(e) {
-        if(e.shiftKey && lastClickedGridIndex !== null) {
-          let currentGridRows = Array.from(document.querySelectorAll('#gridBody tr'));
-          let currentIndex = gridIndex;
-          let start = Math.min(lastClickedGridIndex, currentIndex);
-          let end = Math.max(lastClickedGridIndex, currentIndex);
-          currentGridRows.forEach((row, idx) => {
-            if(idx >= start && idx <= end) {
-              let origIdx = parseInt(row.dataset.origIndex);
-              uploadedCoordinates[origIdx].selected = true;
-              row.classList.add('selected');
+      updateGrid();
+    }
+    function filterGrid(){ updateGrid(); }
+    
+    /* 마커 갱신 */
+    function refreshMarkers() {
+      if(!isMapInitialized) initMap();
+      
+      // 기존 클러스터 마커 제거
+      clusterMarkers.forEach(m => m.setMap(null));
+      clusterMarkers = [];
+      markerCluster.clearMarkers();
+      
+      // 새 마커 생성: 토글에 따라 처리
+      uploadedCoordinates.forEach(coord => {
+        if(!coord.display) return;
+        // 토글 ON이면 강조된 좌표만 클러스터에 포함
+        if(showHighlightedMarkers && !coord.highlight) return;
+        // 아이콘 결정: 토글 OFF이면 모든 좌표, 강조된 건 강조 아이콘
+        let icon = coord.highlight ? createHighlightedIcon(coord.markerColor, coord.accident)
+                                   : createMarkerIcon(coord.markerColor, coord.accident);
+        let marker = markerMap.get(coord);
+        if(!marker) {
+          marker = new google.maps.Marker({ position: {lat: coord.lat, lng: coord.lng} });
+          markerMap.set(coord, marker);
+          marker.addListener('click', () => {
+            updateInfoPanel(coord);
+            openInfoPanel();
+            if(coord.highlight) { // 강조된 마커 클릭 시 확대
+              map.setZoom(15);
+              map.panTo({lat: coord.lat, lng: coord.lng});
             }
           });
         }
+        marker.setIcon(icon);
+        marker.setMap(null);
+        clusterMarkers.push(marker);
       });
-      gridBody.appendChild(tr);
-    });
-  }
-  
-  // 개별 행의 마커 표시 토글
-  function toggleDisplay(index, checkbox){
-    uploadedCoordinates[index].display = checkbox.checked;
-    refreshMarkers();
-  }
-  function setMarkerColor(index, input){
-    uploadedCoordinates[index].markerColor = input.value;
-    refreshMarkers();
-  }
-  
-  // 전체 선택 (현재 그리드에 보이는 데이터)
-  function toggleGlobalSelect(checkbox){
-    const filterValue = document.getElementById('globalFilter').value.trim();
-    let dataToShow = (filterValue) ? uploadedCoordinates.filter(coord => coord.accident === filterValue) : uploadedCoordinates;
-    dataToShow.forEach(coord => { coord.selected = checkbox.checked; });
-    updateGrid();
-  }
-  
-  // 전역 설정: 선택된 행에 대해 markerColor 변경
-  function applyGlobalSettings(){
-    const globalColor = document.getElementById('globalColor').value;
-    const filterValue = document.getElementById('globalFilter').value.trim();
-    let dataToShow = (filterValue) ? uploadedCoordinates.filter(coord => coord.accident === filterValue) : uploadedCoordinates;
-    dataToShow.forEach(coord => {
-      if(coord.selected) { coord.markerColor = globalColor; }
-    });
-    updateGrid();
-    refreshMarkers();
-  }
-  
-  // 전역 마커 표시 토글 (선택된 행에 대해)
-  function applyGlobalDisplay(checkbox) {
-    uploadedCoordinates.forEach(coord => {
-      if(coord.selected) {
-        coord.display = checkbox.checked;
-      }
-    });
-    updateGrid();
-    refreshMarkers();
-  }
-  
-  function sortGrid(key){
-    uploadedCoordinates.sort((a, b) => {
-      if(a[key] < b[key]) return -1;
-      if(a[key] > b[key]) return 1;
-      return 0;
-    });
-    updateGrid();
-  }
-  
-  function filterGrid(){
-    updateGrid();
-  }
-  
-  // 날짜 검색
-  function searchByDate(){
-    const searchTerm = document.getElementById('dateSearch').value.trim();
-    if(!searchTerm){
-      alert("검색할 날짜를 입력하세요.");
-      return;
+      
+      markerCluster.addMarkers(clusterMarkers);
+      // (토글 변경 시 지도 줌/중심은 그대로 유지)
     }
-    const results = uploadedCoordinates.filter(coord => coord.date.includes(searchTerm));
-    if(results.length === 0){
-      alert("해당 날짜의 데이터가 없습니다.");
-      return;
-    }
-    const coord = results[0];
-    map.panTo({lat: coord.lat, lng: coord.lng});
-    map.setZoom(12);
-    updateInfoPanel(coord);
-    openInfoPanel();
-  }
-  
-  // 마커 갱신
-  function refreshMarkers(){
-    if(!isMapInitialized) initMap();
-    markers.forEach(m => m.setMap(null));
-    markers = [];
-    if(markerCluster) {
-      markerCluster.clearMarkers();
-    }
-    uploadedCoordinates.forEach(coord => {
-      if(coord.display === false) return;
-      const marker = new google.maps.Marker({
-        position: {lat: coord.lat, lng: coord.lng},
-        label: {
-          text: coord.accident,
-          color: coord.markerColor,
-          fontSize: "14px",
-          fontWeight: "bold"
+    
+    /* 초기 로드 */
+    window.onload = function() {
+      document.getElementById('pageMap').classList.add('active');
+      document.querySelectorAll('.submenu-item')[0].classList.add('active');
+      initMap();
+      fetchExcelFromGitHub();
+      document.addEventListener('click', function(e){
+        const gridPanel = document.getElementById('dataGrid');
+        const globalPanel = document.getElementById('gridPanel');
+        if(!gridPanel.contains(e.target) && !globalPanel.contains(e.target)){
+          uploadedCoordinates.forEach(coord => coord.selected = false);
+          updateGrid();
         }
       });
-      marker.addListener('click', () => {
-        updateInfoPanel(coord);
-        openInfoPanel();
-      });
-      markers.push(marker);
-    });
-    map.setCenter({lat: 35.8, lng: 127.7});
-    map.setZoom(7);
-    if(markerCluster) {
-      markerCluster.addMarkers(markers);
-    }
-  }
-  
-  window.onload = function(){
-    document.getElementById('pageMap').classList.add('active');
-    document.querySelectorAll('.submenu-item')[0].classList.add('active');
-    initMap();
-    // GitHub Excel 자동 로드 (로컬 서버에서 테스트 권장)
-    fetchExcelFromGitHub();
-  };
-</script>
+      document.addEventListener('mouseup', () => { isDragging = false; });
+    };
+  </script>
 </body>
 </html>

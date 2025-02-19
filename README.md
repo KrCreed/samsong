@@ -21,6 +21,7 @@ ex) https://raw.githubusercontent.com/KrCreed/samsong/main/테슬라전국데이
 
 파이어 베이스 api key 변경
 코드 523-529 부분 변경
+
 ex)   apiKey: "AIzaSyAFYyFvuv04dKVKkz4hYq8on_JYlbtw_F4",
       authDomain: "samsong-28f4f.firebaseapp.com",
       projectId: "samsong-28f4f",
@@ -28,6 +29,7 @@ ex)   apiKey: "AIzaSyAFYyFvuv04dKVKkz4hYq8on_JYlbtw_F4",
       messagingSenderId: "840121036484",
       appId: "1:840121036484:web:b57eedc456b3beb236a391",
       measurementId: "G-Z00YP5N303"
+      
 부분 변경
 
 

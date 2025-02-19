@@ -4,8 +4,8 @@ A = 0, B = 1, C = 2, D = 3, E = 4, F = 5, G = 6, H = 7, I = 8, J = 9
 K = 10, L = 11, M = 12, N = 13, O = 14, P = 15, Q = 16, R = 17, S = 18, T = 19
 U = 20, V = 21, W = 22, X = 23, Y = 24, Z = 25, AA = 26, AB = 27, AC = 28, AD = 29
 AE = 30, AF = 31, AG = 32, AH = 33, AI = 34, AJ = 35, AK = 36
-
-엑셀에 맞게 코드 655-669 부분 변경 필요합니다(주석에 맞게 row[] 대괄호 안 숫자 변경)![image](https://github.com/user-attachments/assets/87d481a9-00e4-4ec8-afbf-8f32d12588c4)
+13
+엑셀에 맞게 코드 655-669 부분 변경 필요합니다(주석에 맞게 row[] 대괄호 안 숫자 변경)![image](https://github.com/user-attachments/assets/87d481a9-00e4-4ec8-afbf-8f32d12588c4) ex) 경도가 N 열이면 row[13]
 
 
 

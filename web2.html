@@ -20,98 +20,96 @@
   <style>
     /* 기본 리셋 */
     * {
-      margin: 0; 
-      padding: 0; 
-      box-sizing: border-box; 
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
       font-family: 'Roboto', sans-serif;
     }
     html, body {
-      width: 100%; 
-      height: 100%; 
-      background: #f5f5f5; 
+      width: 100%;
+      height: 100%;
+      background: #f5f5f5;
       overflow: hidden;
     }
     .wrapper {
-      display: flex; 
-      flex-direction: column; 
-      width: 100%; 
+      display: flex;
+      flex-direction: column;
+      width: 100%;
       height: 100%;
     }
     /* 헤더 */
     .header {
-      height: 60px; 
-      background: #fff; 
-      display: flex; 
+      height: 60px;
+      background: #fff;
+      display: flex;
       align-items: center;
-      padding: 0 1rem; 
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+      padding: 0 1rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       flex-shrink: 0;
     }
     .header .left-menu {
-      display: flex; 
+      display: flex;
       align-items: center;
     }
     .menu-icon {
-      cursor: pointer; 
+      cursor: pointer;
       margin-right: 1rem;
     }
     .header-logo {
-      width: 80px; 
-      height: 80px; 
+      width: 80px;
+      height: 80px;
       margin-right: 1rem;
     }
     .title {
-      font-size: 1.2rem; 
+      font-size: 1.2rem;
       font-weight: 500;
     }
-    
     /* 메인 영역 */
     .content {
-      flex: 1; 
-      overflow: auto; 
-      background: #fff; 
-      padding: 1rem; 
-      position: relative; 
-      z-index: 1; 
+      flex: 1;
+      overflow: auto;
+      background: #fff;
+      padding: 1rem;
+      position: relative;
+      z-index: 1;
     }
-    .page-section { 
-      display: none; 
+    .page-section {
+      display: none;
     }
-    .page-section.active { 
-      display: block; 
+    .page-section.active {
+      display: block;
     }
-    
     /* GRID 페이지 */
     #gridPanel {
-      margin-bottom: 20px; 
-      padding: 10px; 
-      border: 1px solid #ccc; 
+      margin-bottom: 20px;
+      padding: 10px;
+      border: 1px solid #ccc;
       background: #fafafa;
-      display: flex; 
-      flex-direction: column; 
+      display: flex;
+      flex-direction: column;
       gap: 5px;
     }
     .search-row, .control-row {
-      display: flex; 
-      align-items: center; 
-      gap: 20px; 
+      display: flex;
+      align-items: center;
+      gap: 20px;
       flex-wrap: wrap;
     }
-    .search-row .input-group, 
+    .search-row .input-group,
     .control-row .input-group {
-      display: flex; 
-      align-items: center; 
+      display: flex;
+      align-items: center;
       gap: 5px;
     }
     #gridPanel label {
       margin-right: 5px;
     }
     #gridPanel button {
-      padding: 5px 10px; 
-      background: #3498db; 
-      color: #fff; 
-      border: none; 
-      border-radius: 4px; 
+      padding: 5px 10px;
+      background: #3498db;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
       cursor: pointer;
     }
     #gridPanel button:hover {
@@ -119,107 +117,264 @@
     }
     /* "XX개 로드됨" 표시 */
     #loadCountLabel {
-      margin-left: auto; 
-      font-size: 0.9rem; 
+      margin-left: auto;
+      font-size: 0.9rem;
       color: #666;
     }
     /* 지도 */
     #map {
-      width: 100%; 
-      height: 500px; 
+      width: 100%;
+      height: 500px;
       background: #ddd;
     }
     /* 좌측 사이드바 */
     .sidebar {
-      position: fixed; top: 0; left: 0; width: 260px; height: 100%;
-      background: #2c3e50; color: #ecf0f1; transform: translateX(-260px);
-      transition: transform 0.3s ease; z-index: 999; display: flex; flex-direction: column;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 260px;
+      height: 100%;
+      background: #2c3e50;
+      color: #ecf0f1;
+      transform: translateX(-260px);
+      transition: transform 0.3s ease;
+      z-index: 999;
+      display: flex;
+      flex-direction: column;
     }
-    .sidebar.open { transform: translateX(0); }
+    .sidebar.open {
+      transform: translateX(0);
+    }
     .sidebar-header {
-      background: #34495e; padding: 1rem; display: flex; align-items: center; justify-content: space-between;
+      background: #34495e;
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
-    .sidebar-header .logo { display: flex; align-items: center; font-weight: bold; font-size: 1.2rem; }
-    .sidebar-header .logo img { display: none; }
-    .close-btn { cursor: pointer; font-size: 1.4rem; color: #ecf0f1; background: none; border: none; }
-    .menu-group { padding: 1rem; }
-    .menu-title { font-size: 0.85rem; text-transform: uppercase; font-weight: 600; margin-bottom: 0.3rem; opacity: 0.7; }
+    .sidebar-header .logo {
+      display: flex;
+      align-items: center;
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+    .sidebar-header .logo img {
+      display: none;
+    }
+    .close-btn {
+      cursor: pointer;
+      font-size: 1.4rem;
+      color: #ecf0f1;
+      background: none;
+      border: none;
+    }
+    .menu-group {
+      padding: 1rem;
+    }
+    .menu-title {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+      opacity: 0.7;
+    }
     .submenu-toggle {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0.5rem; cursor: pointer; margin-top: 0.5rem; border-radius: 4px;
-      background: #3b4a58; transition: background 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.5rem;
+      cursor: pointer;
+      margin-top: 0.5rem;
+      border-radius: 4px;
+      background: #3b4a58;
+      transition: background 0.2s;
     }
-    .submenu-toggle:hover { background: #4a5966; }
-    .submenu-toggle span { display: flex; align-items: center; }
-    .submenu-toggle i { margin-right: 0.3rem; }
+    .submenu-toggle:hover {
+      background: #4a5966;
+    }
+    .submenu-toggle span {
+      display: flex;
+      align-items: center;
+    }
+    .submenu-toggle i {
+      margin-right: 0.3rem;
+    }
     .submenu {
-      max-height: 0; overflow: hidden; transition: max-height 0.3s ease; margin-left: 0.5rem;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+      margin-left: 0.5rem;
     }
-    .submenu.open { max-height: 200px; }
+    .submenu.open {
+      max-height: 200px;
+    }
     .submenu-item {
-      padding: 0.3rem 1rem; display: flex; align-items: center; cursor: pointer;
-      border-radius: 4px; margin: 0.2rem 0; transition: background 0.2s;
+      padding: 0.3rem 1rem;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      border-radius: 4px;
+      margin: 0.2rem 0;
+      transition: background 0.2s;
     }
-    .submenu-item:hover { background: #4a5966; }
+    .submenu-item:hover {
+      background: #4a5966;
+    }
     .submenu-item .circle {
-      width: 14px; height: 14px; border-radius: 50%; border: 2px solid #ecf0f1; margin-right: 0.5rem;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 2px solid #ecf0f1;
+      margin-right: 0.5rem;
     }
-    .submenu-item.active .circle { background: #ecf0f1; }
+    .submenu-item.active .circle {
+      background: #ecf0f1;
+    }
     /* 우측 상세 패널 */
     .info-panel {
-      position: fixed; top: 0; right: 0; width: 50%; height: 100%;
-      background: #f8f8f8; border-left: 1px solid #ccc; padding: 1rem;
-      z-index: 999; overflow: auto; display: none;
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 50%;
+      height: 100%;
+      background: #f8f8f8;
+      border-left: 1px solid #ccc;
+      padding: 1rem;
+      z-index: 999;
+      overflow: auto;
+      display: none;
     }
-    .info-panel.open { display: block; }
-    .info-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
-    .info-header h3 { margin: 0; }
-    .info-close-btn { cursor: pointer; background: none; border: none; font-size: 1.2rem; color: #999; }
-    .info-row { margin-bottom: 0.6rem; line-height: 1.4; }
-    .info-label { font-weight: bold; color: #555; margin-right: 0.2rem; }
+    .info-panel.open {
+      display: block;
+    }
+    .info-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    .info-header h3 {
+      margin: 0;
+    }
+    .info-close-btn {
+      cursor: pointer;
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      color: #999;
+    }
+    .info-row {
+      margin-bottom: 0.6rem;
+      line-height: 1.4;
+    }
+    .info-label {
+      font-weight: bold;
+      color: #555;
+      margin-right: 0.2rem;
+    }
     /* 그리드 테이블 */
     #dataGrid {
-      width: 100%; border-collapse: collapse;
+      width: 100%;
+      border-collapse: collapse;
     }
     #dataGrid th, #dataGrid td {
-      border: 1px solid #ccc; padding: 5px; text-align: left; font-size: 14px;
+      border: 1px solid #ccc;
+      padding: 5px;
+      text-align: left;
+      font-size: 14px;
     }
-    #dataGrid th { background: #eee; cursor: pointer; }
-    .selected { background-color: #ccc !important; }
+    #dataGrid th {
+      background: #eee;
+      cursor: pointer;
+    }
+    .selected {
+      background-color: #ccc !important;
+    }
     /* 동영상 컨테이너 */
-    .video-container { margin-top: 0.5rem; margin-bottom: 1rem; }
+    .video-container {
+      margin-top: 0.5rem;
+      margin-bottom: 1rem;
+    }
     @media (max-width:768px){
-      .sidebar { width:200px; transform:translateX(-200px); }
-      .sidebar.open { transform:translateX(0); }
-      .info-panel { width:220px; }
+      .sidebar {
+        width:200px;
+        transform:translateX(-200px);
+      }
+      .sidebar.open {
+        transform:translateX(0);
+      }
+      .info-panel {
+        width:220px;
+      }
     }
     /* 로그인 오버레이 */
     #loginOverlay {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: #fff; display: flex; flex-direction: column;
-      justify-content: center; align-items: center; z-index: 10000;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 10000;
     }
-    #loginHeader { text-align: center; margin-bottom: 20px; }
-    #loginHeader img { width: 80px; margin-bottom: 10px; }
-    #loginHeader h1 { font-size: 24px; font-weight: bold; color: #3498db; margin: 0; }
+    #loginHeader {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    #loginHeader img {
+      width: 80px;
+      margin-bottom: 10px;
+    }
+    #loginHeader h1 {
+      font-size: 24px;
+      font-weight: bold;
+      color: #3498db;
+      margin: 0;
+    }
     #loginForm {
-      background: #fff; padding: 20px; border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.3); text-align: center; width: 300px;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+      text-align: center;
+      width: 300px;
     }
-    #loginForm h2 { margin-bottom: 20px; }
+    #loginForm h2 {
+      margin-bottom: 20px;
+    }
     #loginForm input {
-      display: block; width: 100%; padding: 10px; margin-bottom: 10px; font-size: 16px;
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      font-size: 16px;
     }
     #loginForm button {
-      padding: 10px; width: 100%; background: #3498db; color: #fff;
-      border: none; border-radius: 4px; font-size: 16px; cursor: pointer;
+      padding: 10px;
+      width: 100%;
+      background: #3498db;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
     }
     /* 드롭다운 (마커 색상 선택) */
     select.color-dropdown {
-      width: 80px; padding: 0 4px; font-size: 14px; text-align: center;
-      cursor: pointer; border: 1px solid #ccc;
+      width: 80px;
+      padding: 0 4px;
+      font-size: 14px;
+      text-align: center;
+      cursor: pointer;
+      border: 1px solid #ccc;
     }
-    option.color-swatch { padding: 2px; }
+    option.color-swatch {
+      padding: 2px;
+    }
   </style>
 </head>
 <body>
@@ -326,7 +481,6 @@
     </div>
   </div>
   
-  <!-- 좌측 사이드바 -->
   <div class="sidebar" id="sidebar">
     <div class="sidebar-header">
       <div class="logo">Samsong</div>
@@ -349,7 +503,6 @@
     </div>
   </div>
   
-  <!-- 우측 상세 패널 -->
   <div class="info-panel" id="infoPanel">
     <div class="info-header">
       <h3>상세 정보</h3>
@@ -365,7 +518,7 @@
   </div>
   
   <script>
-    // Firebase 초기화
+    // ------------------- Firebase 초기화 -------------------
     var firebaseConfig = {
       apiKey: "AIzaSyAFYyFvuv04dKVKkz4hYq8on_JYlbtw_F4",
       authDomain: "samsong-28f4f.firebaseapp.com",
@@ -392,7 +545,7 @@
     const DEFAULT_CENTER = { lat: 35.8, lng: 127.7 };
     const DEFAULT_ZOOM = 7;
 
-    // 로그인 폼 처리
+    // ------------------- 로그인 폼 처리 -------------------
     document.getElementById('loginForm').addEventListener('submit', function(e) {
       e.preventDefault();
       var email = document.getElementById('loginEmail').value;
@@ -419,7 +572,7 @@
         });
     });
 
-    // 로그인 상태 감지
+    // ------------------- 로그인 상태 감지 -------------------
     auth.onAuthStateChanged(function(user) {
       if (user) {
         document.getElementById('loginOverlay').style.display = 'none';
@@ -433,7 +586,7 @@
       }
     });
 
-    // 페이지 로드시 이전 세션 해제
+    // ------------------- 페이지 로드시 이전 세션 해제 -------------------
     window.onload = function() {
       auth.signOut().then(() => {
         document.addEventListener('click', function(e){
@@ -450,7 +603,7 @@
       });
     };
 
-    // 사이드바/메뉴
+    // ------------------- 사이드바 및 메뉴 -------------------
     function openSidebar(){ document.getElementById('sidebar').classList.add('open'); }
     function closeSidebar(){ document.getElementById('sidebar').classList.remove('open'); }
     function toggleSubmenu(){ document.getElementById('bcSubmenu').classList.toggle('open'); }
@@ -474,10 +627,23 @@
     function openInfoPanel(){ document.getElementById('infoPanel').classList.add('open'); }
     function closeInfoPanel(){ document.getElementById('infoPanel').classList.remove('open'); }
 
-    // 엑셀 로드
+    // ------------------- 엑셀 데이터 로드 (여기부터 엑셀의 6번째 행(인덱스 5)부터 데이터를 읽어옵니다.) -------------------
+    /* 
+       엑셀 파일 형식에 따른 각 열의 역할:
+       - row[0]: (예) 시작시간 (첫 번째 열)
+       - row[1]: (예) 끝 시간 (사용되지 않을 수 있음)
+       - row[2]: 영상파일명 (파일명)
+       - row[3]: 사고 날짜 및 시간 (날짜; 여기서 앞 10자리를 사용)
+       - row[12]: 위도 (GPS 좌표)
+       - row[13]: 경도 (GPS 좌표)
+       - row[15]: 사고 상황 (설명)
+       - row[18]: 사고유형 (예: 사고번호 등)
+       - row[36]: 도로명 주소
+       필요에 따라 이 인덱스들을 수정하여 엑셀 형식 변경에 대응할 수 있습니다.
+    */
     async function fetchExcelFromGitHub(){
       try {
-        const url = "https://raw.githubusercontent.com/KrCreed/samsong/main/테슬라전국데이터_2%20-%20복사본.xlsx";
+        const url = "https://raw.githubusercontent.com/KrCreed/samsong/main/테슬라전국데이터_2%20-%20복사본.xlsx"; // 엑셀 로드 url
         const response = await fetch(url);
         if(!response.ok) throw new Error("Network response was not ok: " + response.status);
         const arrayBuffer = await response.arrayBuffer();
@@ -486,21 +652,21 @@
         const ws = wb.Sheets[sheetName];
         const rows = XLSX.utils.sheet_to_json(ws, {header:1});
         uploadedCoordinates = [];
-        for(let i=5; i<rows.length; i++){
+        for(let i = 5; i < rows.length; i++){ // 6번째 행부터 읽음 (인덱스 5)
           const row = rows[i];
           if(!row) continue;
-          let valA = String(row[0]??"").trim();
-          let valB = String(row[1]??"").trim();
+          let valA = String(row[0] ?? "").trim(); // 예: 시작 시간
+          let valB = String(row[1] ?? "").trim(); // 예: 끝 시간간
           if(!valA || !valB) continue;
-          const lat = parseFloat(row[12]??"");
-          const lng = parseFloat(row[13]??"");
+          const lat = parseFloat(row[12] ?? ""); // 위도 
+          const lng = parseFloat(row[13] ?? ""); // 경도 
           if(isNaN(lat) || isNaN(lng)) continue;
-          let rawDate = String(row[3]??"").trim();
-          let dateOnly = (rawDate.length>=10)?rawDate.substring(0,10):rawDate;
-          let accident = String(row[18]??"").trim();
-          let situation = String(row[15]??"").trim();
-          let road = String(row[36]??"").trim();
-          let videoFile = String(row[2]??"").trim();
+          let rawDate = String(row[3] ?? "").trim(); // 사고 날짜
+          let dateOnly = (rawDate.length >= 10) ? rawDate.substring(0, 10) : rawDate;
+          let accident = String(row[17] ?? "").trim(); // 사고유형 
+          let situation = String(row[15] ?? "").trim(); // 사고 상황 
+          let road = String(row[35] ?? "").trim(); // 도로명 주소 
+          let videoFile = String(row[2] ?? "").trim(); // 영상파일명 
           uploadedCoordinates.push({
             lat, lng,
             date: dateOnly,
@@ -514,6 +680,7 @@
             highlight: false
           });
         }
+        /* 여기까지 엑셀 데이터 읽기 끝 */
         document.getElementById('loadCountLabel').textContent = uploadedCoordinates.length + "개 로드됨";
         updateGrid();
         refreshMarkers();
@@ -523,7 +690,7 @@
       }
     }
 
-    // 상세정보 패널
+    // ------------------- 상세정보 패널 업데이트 -------------------
     function updateInfoPanel(coord){
       document.getElementById('infoDate').textContent = coord.date || "";
       document.getElementById('infoAccident').textContent = coord.accident || "";
@@ -555,7 +722,7 @@
       }
     }
 
-    // 지도 초기화
+    // ------------------- 지도 초기화 -------------------
     function initMap(){
       if(isMapInitialized) return;
       isMapInitialized = true;
@@ -565,11 +732,9 @@
         mapTypeId: 'roadmap'
       });
       markerCluster = new markerClusterer.MarkerClusterer({ map, markers: [] });
-      // 강조 마커 보기 토글 버튼
       const toggleDiv = document.createElement('div');
       createToggleControl(toggleDiv);
       map.controls[google.maps.ControlPosition.TOP_RIGHT].push(toggleDiv);
-      // 지도 초기화 버튼
       const resetDiv = document.createElement('div');
       createResetControl(resetDiv);
       map.controls[google.maps.ControlPosition.LEFT_TOP].push(resetDiv);
@@ -618,7 +783,8 @@
       });
     }
 
-    // 일반 마커
+    // ------------------- 마커 아이콘 생성 -------------------
+    // 일반 마커: 원 + 텍스트 (테두리 없음)
     function createMarkerIcon(color, text){
       let textColor = "#ffffff";
       if(color.toLowerCase() === "#ffffff" || color.toLowerCase() === "#ffff00") {
@@ -626,19 +792,19 @@
       }
       const svg = `
         <svg width="40" height="40" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
-          <!-- 원을 뷰박스 중앙(25,25)에 radius=20으로 -->
+          <!-- 원: 중심 (25,25), 반지름=20 -->
           <circle cx="25" cy="25" r="20" fill="${color}" />
           <text x="25" y="31" text-anchor="middle" fill="${textColor}" font-size="16" font-family="Roboto" font-weight="bold">${text}</text>
         </svg>
       `;
       return {
         url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg),
-        // 최종 렌더 크기는 40×40
         scaledSize: new google.maps.Size(40, 40)
       };
     }
 
-    // 강조 마커: viewBox="0 0 50 50"로 확대, 테두리+별도 안 잘리게
+    // 강조 마커: 원(테두리 포함) + 왼쪽 위에 노란 별  
+    // 별의 중심, 크기, 테두리 두께는 아래 변수들로 제어 (수정하기 쉽게 주석으로 설명)
     function createHighlightedIcon(color, text){
       let textColor = "#ffffff";
       if(color.toLowerCase() === "#ffffff" || color.toLowerCase() === "#ffff00") {
@@ -648,19 +814,21 @@
       if(color.toLowerCase() === "#000000") {
         borderColor = "#ffffff";
       }
-      // 별 중심과 반지름, strokeWidth
-      // 여기서 별 중심 (starCx, starCy)을 10,10 등으로 잡아도 되고
-      // 원의 중심은 (25,25)에 radius=20
+      // [별 설정 시작]
+      // 별의 중심 좌표 (starCx, starCy): 이 값을 수정하면 별의 위치가 이동합니다.
       const starCx = 10;
       const starCy = 10;
+      // 별의 외부 반지름(outerR)과 내부 반지름(innerR): 별의 크기를 결정합니다.
       const outerR = 8;
       const innerR = 4;
-      const starStrokeWidth = 3;
+      // 별 테두리 두께: 현재 2.5로 설정 (이 값을 수정하면 별 테두리의 두께가 바뀝니다)
+      const starStrokeWidth = 2.5;
+      // [별 설정 끝]
       
-      // 5각별 점 계산
+      // 5각별 점 계산 (별은 총 10개의 점으로 구성됩니다)
       let starPoints = "";
       for (let i = 0; i < 10; i++) {
-        let angleDeg = -90 + i * 36; 
+        let angleDeg = -90 + i * 36; // -90도에서 시작하여 36도씩 증가
         let angleRad = angleDeg * Math.PI / 180;
         let r = (i % 2 === 0) ? outerR : innerR;
         let x = starCx + r * Math.cos(angleRad);
@@ -670,11 +838,11 @@
       
       const svg = `
         <svg width="40" height="40" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
-          <!-- 원(사용자 색), 중심 (25,25), 반지름=20, 테두리=2px -->
+          <!-- 원: 중심 (25,25), 반지름=20, 테두리 두께=2px -->
           <circle cx="25" cy="25" r="20" fill="${color}" stroke="${borderColor}" stroke-width="2"/>
-          <!-- 노란 별 (좌표 starCx=10, starCy=10), strokeWidth=2.5 -->
+          <!-- 노란 별: 별의 좌표는 위에서 계산된 starPoints, 테두리 두께는 starStrokeWidth -->
           <polygon fill="yellow" stroke="black" stroke-width="${starStrokeWidth}" points="${starPoints}" />
-          <!-- 텍스트 -->
+          <!-- 텍스트: 중심 (25,31) -->
           <text x="25" y="31" text-anchor="middle" fill="${textColor}" font-size="16" font-family="Roboto" font-weight="bold">${text}</text>
         </svg>
       `;
@@ -684,7 +852,7 @@
       };
     }
 
-    // 그리드 업데이트
+    // ------------------- 그리드 업데이트 -------------------
     function updateGrid(){
       const gridBody = document.getElementById('gridBody');
       gridBody.innerHTML = "";
@@ -787,7 +955,7 @@
         });
         
         gridBody.appendChild(tr);
-
+        
         const colorSelect = tr.querySelector(`#colorSelect_${origIndex}`);
         applySelectBackgroundColor(colorSelect, coord.markerColor);
       });
@@ -802,7 +970,7 @@
       }
     }
 
-    // 개별 마커 설정
+    // ------------------- 개별 마커 설정 -------------------
     function toggleDisplay(index, checkbox) {
       uploadedCoordinates[index].display = checkbox.checked;
       refreshMarkers();
@@ -817,15 +985,13 @@
       refreshMarkers();
     }
 
-    // 전역 즉시 반영
+    // ------------------- 전역 즉시 반영 -------------------
     function applyGlobalSettingsImmediately(){
       const globalColorSelect = document.getElementById('globalColor');
       const globalColor = globalColorSelect.value;
       applySelectBackgroundColor(globalColorSelect, globalColor);
       const filterValue = document.getElementById('globalFilter').value.trim();
-      let dataToShow = filterValue
-        ? uploadedCoordinates.filter(coord => coord.accident.includes(filterValue))
-        : uploadedCoordinates;
+      let dataToShow = filterValue ? uploadedCoordinates.filter(coord => coord.accident.includes(filterValue)) : uploadedCoordinates;
       dataToShow.forEach(coord => {
         if(coord.selected) coord.markerColor = globalColor;
       });
@@ -841,9 +1007,7 @@
     }
     function toggleGlobalSelect(checkbox) {
       const filterValue = document.getElementById('globalFilter').value.trim();
-      let dataToShow = filterValue
-        ? uploadedCoordinates.filter(coord => coord.accident.includes(filterValue))
-        : uploadedCoordinates;
+      let dataToShow = filterValue ? uploadedCoordinates.filter(coord => coord.accident.includes(filterValue)) : uploadedCoordinates;
       dataToShow.forEach(coord => { coord.selected = checkbox.checked; });
       updateGrid();
     }
@@ -855,7 +1019,7 @@
       refreshMarkers();
     }
 
-    // 정렬
+    // ------------------- 정렬 -------------------
     function sortGrid(key) {
       uploadedCoordinates.sort((a, b) => {
         if(a[key] < b[key]) return -1;
@@ -866,7 +1030,7 @@
     }
     function filterGrid(){ updateGrid(); }
 
-    // 마커 갱신
+    // ------------------- 마커 갱신 -------------------
     function refreshMarkers() {
       if(!isMapInitialized) return;
       clusterMarkers.forEach(m => m.setMap(null));

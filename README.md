@@ -5,10 +5,13 @@ K = 10, L = 11, M = 12, N = 13, O = 14, P = 15, Q = 16, R = 17, S = 18, T = 19
 U = 20, V = 21, W = 22, X = 23, Y = 24, Z = 25, AA = 26, AB = 27, AC = 28, AD = 29
 AE = 30, AF = 31, AG = 32, AH = 33, AI = 34, AJ = 35, AK = 36
 
-엑셀에 맞게 코드 655-669 부분 변경
+엑셀에 맞게 코드 655-669 부분 변경 필요합니다(주석에 맞게 row[] 대괄호 안 숫자 변경)![image](https://github.com/user-attachments/assets/87d481a9-00e4-4ec8-afbf-8f32d12588c4)
+
+
+
 
 엑셀명 url 
-깃허브에 업로드한 엑셀명으로 코드 수정할것
+깃허브에 업로드한 엑셀명으로 코드 수정할 필요 있습니다.
 
 https://raw.githubusercontent.com/사용자명/리포지토리명/main/파일경로/파일명.xlsx
 
